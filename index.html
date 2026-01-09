@@ -37,9 +37,7 @@
         </div>
         <div id="client-list" class="flex-1 overflow-y-auto px-4 space-y-2"></div>
         <div class="p-6">
-            <button onclick="createNewAudit()" class="w-full py-4 bg-[#16c800] text-black font-black uppercase text-xs tracking-widest rounded-xl hover:scale-105 transition">
-                + New Proposal
-            </button>
+            <button onclick="createNewAudit()" class="w-full py-4 bg-[#16c800] text-black font-black uppercase text-xs tracking-widest rounded-xl hover:scale-105 transition">+ New Proposal</button>
         </div>
     </aside>
 
@@ -63,10 +61,7 @@
                     <h1 class="text-4xl font-black italic tracking-tighter uppercase leading-none">Strategic Audit<br>& Project Proposal</h1>
                     <p class="font-bold text-zinc-500 uppercase tracking-widest mt-2">Prepared by Streamlined Solutions</p>
                 </div>
-                <div class="text-right">
-                    <div class="w-16 h-16 bg-[#16c800] ml-auto mb-4"></div>
-                    <p id="print-date" class="text-sm font-black"></p>
-                </div>
+                <div class="text-right"><p id="print-date" class="text-sm font-black"></p></div>
             </div>
 
             <div class="grid grid-cols-2 gap-8 section-card">
@@ -77,33 +72,41 @@
             <div class="section-card">
                 <h3 class="text-xl font-black italic uppercase tracking-tighter mb-6">Executive Analysis</h3>
                 <div class="grid grid-cols-2 gap-8 mb-6">
-                    <div><label>What You've Built Well</label><textarea id="what_well" rows="4" placeholder="Highlight their current wins..."></textarea></div>
-                    <div><label>Where We Found Friction</label><textarea id="what_improved" rows="4" placeholder="Highlight the bottlenecks..."></textarea></div>
+                    <div><label>What You've Built Well</label><textarea id="what_well" rows="4"></textarea></div>
+                    <div><label>Where We Found Friction</label><textarea id="what_improved" rows="4"></textarea></div>
                 </div>
-                <label>The Streamlined Vision (Our Transformation)</label>
-                <textarea id="our_improvement" rows="3" placeholder="How we bridge the gap..."></textarea>
             </div>
 
             <div class="section-card">
                 <h3 class="text-lg font-black uppercase mb-6 flex items-center gap-3">
                     <span class="bg-black text-white w-8 h-8 flex items-center justify-center text-xs italic">01</span>
-                    Infrastructure Inventory
+                    User Experience & Navigation
                 </h3>
-                <div class="grid grid-cols-2 gap-10">
-                    <div>
-                        <p class="text-[10px] font-black uppercase text-zinc-400 mb-4">Current Assets (What you have)</p>
-                        <textarea id="have_list" rows="5" placeholder="• Established Domain&#10;• Professional Photography..."></textarea>
-                    </div>
-                    <div>
-                        <p class="text-[10px] font-black uppercase text-zinc-400 mb-4">Missing Components (What you lack)</p>
-                        <textarea id="lack_list" rows="5" placeholder="• National SEO Schema&#10;• High-Velocity Hosting..."></textarea>
-                    </div>
+                <div class="grid grid-cols-3 gap-6 mb-8">
+                    <div><label>Navigation Clarity</label><select id="ux_nav"><option>Good</option><option>Needs Improvement</option></select></div>
+                    <div><label>Page Layout Flow</label><select id="ux_flow"><option>Clear</option><option>Confusing</option></select></div>
+                    <div><label>Mobile Usability</label><select id="ux_mobile"><option>Optimized</option><option>Issues Found</option></select></div>
+                </div>
+                <div class="space-y-4">
+                    <div><label>UX Review Areas</label><p class="text-[10px] text-zinc-400 uppercase font-bold mb-2">Simplicity • Ease of Action • Mobile Usability</p></div>
+                    <div><label>Specific UX Opportunities</label><textarea id="ux_opportunities" rows="3" placeholder="1. Simplify menu items&#10;2. Sticky CTA on mobile..."></textarea></div>
                 </div>
             </div>
 
             <div class="section-card">
                 <h3 class="text-lg font-black uppercase mb-6 flex items-center gap-3">
                     <span class="bg-black text-white w-8 h-8 flex items-center justify-center text-xs italic">02</span>
+                    Infrastructure Inventory
+                </h3>
+                <div class="grid grid-cols-2 gap-10">
+                    <div><label>Current Assets</label><textarea id="have_list" rows="5"></textarea></div>
+                    <div><label>Missing Components</label><textarea id="lack_list" rows="5"></textarea></div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h3 class="text-lg font-black uppercase mb-6 flex items-center gap-3">
+                    <span class="bg-black text-white w-8 h-8 flex items-center justify-center text-xs italic">03</span>
                     Proposed Optimization Scope
                 </h3>
                 <div class="grid grid-cols-2 gap-x-12 gap-y-4">
@@ -111,8 +114,6 @@
                     <div class="flex items-center justify-between py-2 border-b"><span class="grid-label">Workflow Automation</span><input type="checkbox" id="opt_flow"></div>
                     <div class="flex items-center justify-between py-2 border-b"><span class="grid-label">Lead Velocity Engine</span><input type="checkbox" id="opt_lead"></div>
                     <div class="flex items-center justify-between py-2 border-b"><span class="grid-label">Premium Visual Branding</span><input type="checkbox" id="opt_brand"></div>
-                    <div class="flex items-center justify-between py-2 border-b"><span class="grid-label">Operational Systems Audit</span><input type="checkbox" id="opt_audit"></div>
-                    <div class="flex items-center justify-between py-2 border-b"><span class="grid-label">Sub-0.5s Performance</span><input type="checkbox" id="opt_perf"></div>
                 </div>
             </div>
 
@@ -120,18 +121,12 @@
                 <h3 class="text-2xl font-black italic uppercase tracking-tighter mb-8">Investment Breakdown</h3>
                 <div class="space-y-6">
                     <div class="flex justify-between items-center border-b border-zinc-200 pb-4">
-                        <div>
-                            <p class="font-bold uppercase text-xs">System Transformation</p>
-                            <p class="text-[10px] text-zinc-400">Full infrastructure & design overhaul</p>
-                        </div>
-                        <input type="number" id="cost_build" class="w-32 text-right font-bold text-lg bg-transparent border-none focus:outline-none" placeholder="0">
+                        <div><p class="font-bold uppercase text-xs">System Transformation</p></div>
+                        <input type="number" id="cost_build" class="w-32 text-right font-bold text-lg bg-transparent border-none" value="0">
                     </div>
                     <div class="flex justify-between items-center border-b border-zinc-200 pb-4">
-                        <div>
-                            <p class="font-bold uppercase text-xs">Authority & SEO Injection</p>
-                            <p class="text-[10px] text-zinc-400">National scaling and schema setup</p>
-                        </div>
-                        <input type="number" id="cost_seo" class="w-32 text-right font-bold text-lg bg-transparent border-none focus:outline-none" placeholder="0">
+                        <div><p class="font-bold uppercase text-xs">Authority & SEO Injection</p></div>
+                        <input type="number" id="cost_seo" class="w-32 text-right font-bold text-lg bg-transparent border-none" value="0">
                     </div>
                     <div class="flex justify-between items-center pt-4">
                         <p class="text-xl font-black uppercase italic tracking-tighter">Total Estimated Investment</p>
@@ -142,7 +137,6 @@
 
             <div class="mt-20 text-center border-t pt-10">
                 <h4 class="font-black italic text-xl tracking-tighter uppercase"><span class="text-[#16c800]">Streamlined</span> Solutions</h4>
-                <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.3em] mt-2">Strategic Efficiency • National Authority • Growth Systems</p>
             </div>
         </div>
     </main>
@@ -152,13 +146,13 @@
         let activeId = null;
 
         const fields = [
-            'url', 'client_name', 'what_well', 'what_improved', 'our_improvement', 
-            'have_list', 'lack_list', 'opt_seo', 'opt_flow', 'opt_lead', 'opt_brand', 
-            'opt_audit', 'opt_perf', 'cost_build', 'cost_seo'
+            'url', 'client_name', 'what_well', 'what_improved', 'ux_nav', 'ux_flow', 
+            'ux_mobile', 'ux_opportunities', 'have_list', 'lack_list', 'opt_seo', 
+            'opt_flow', 'opt_lead', 'opt_brand', 'cost_build', 'cost_seo'
         ];
 
         function createNewAudit() {
-            const newAudit = { id: 'PROP-' + Date.now(), date: new Date().toLocaleDateString(), client_name: 'New Client Proposal' };
+            const newAudit = { id: 'PROP-' + Date.now(), date: new Date().toLocaleDateString(), client_name: 'New Proposal' };
             fields.forEach(f => newAudit[f] = f.includes('opt_') ? false : '');
             audits.unshift(newAudit);
             saveToStorage();
@@ -189,7 +183,7 @@
             saveToStorage();
             calculateTotal();
             renderSidebar();
-            alert('Proposal Database Updated');
+            alert('Proposal Saved');
         }
 
         function calculateTotal() {
