@@ -3,176 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Streamlined Lab | Master Audit Engine</title>
+    <title>Streamlined Solutions | Master Audit System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #050505; color: white; }
-        .glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .sidebar-item:hover { background: rgba(22, 200, 0, 0.1); border-left: 4px solid #16c800; }
-        .sidebar-item.active { background: rgba(22, 200, 0, 0.2); border-left: 4px solid #16c800; color: #16c800; }
-        input, textarea, select { background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; padding: 12px; border-radius: 8px; width: 100%; }
-        input:focus { border-color: #16c800 !important; outline: none; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono&display=swap');
+        
+        :root { --ss-green: #16c800; --ss-black: #050505; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--ss-black); color: white; height: 100vh; display: flex; overflow: hidden; }
+        
+        /* Dashboard Styling */
+        .glass-sidebar { background: rgba(255, 255, 255, 0.02); border-right: 1px solid rgba(255, 255, 255, 0.05); }
+        .audit-container { background: white; color: #1a1a1a; border-radius: 2rem 0 0 0; }
+        
+        /* Form Styling */
+        input[type="text"], input[type="number"], select, textarea { 
+            width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; margin-top: 0.25rem;
+        }
+        input[type="checkbox"] { width: 1.2rem; height: 1.2rem; accent-color: var(--ss-green); }
+        .section-card { border-bottom: 1px solid #f3f4f6; padding-bottom: 2rem; margin-bottom: 2rem; }
+        label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #6b7280; letter-spacing: 0.05em; }
+        
+        /* Print/PDF Optimization */
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; }
+            .audit-container { border-radius: 0; height: auto; overflow: visible; }
+        }
+
+        .sidebar-item.active { border-left: 4px solid var(--ss-green); background: rgba(22, 200, 0, 0.1); }
     </style>
 </head>
-<body class="h-screen flex overflow-hidden">
+<body>
 
-    <aside class="w-80 glass border-r border-white/5 flex flex-col">
-        <div class="p-8 border-b border-white/5">
-            <h1 class="font-black italic text-xl tracking-tighter"><span class="text-[#16c800]">STMLD</span>_DB</h1>
-            <p class="text-[10px] uppercase tracking-[0.3em] opacity-40 mt-1">Audit Management System</p>
+    <aside class="w-80 glass-sidebar no-print flex flex-col">
+        <div class="p-8">
+            <h1 class="font-black italic text-xl tracking-tighter uppercase"><span class="text-[#16c800]">STMLD</span>_LAB</h1>
+            <p class="text-[10px] opacity-40 font-bold tracking-[0.2em] mt-1 uppercase">Audit Database v3.0</p>
         </div>
 
-        <div class="p-4 flex-1 overflow-y-auto" id="client-list">
+        <div id="client-list" class="flex-1 overflow-y-auto px-4 space-y-2">
             </div>
 
-        <div class="p-6 border-t border-white/5">
-            <button onclick="createNewAudit()" class="w-full py-4 bg-[#16c800] text-black font-black uppercase text-xs tracking-widest rounded-xl hover:scale-105 transition shadow-[0_0_20px_rgba(22,200,0,0.2)]">
-                <i class="fa-solid fa-plus mr-2"></i> New Audit
+        <div class="p-6 space-y-3">
+            <button onclick="createNewAudit()" class="w-full py-4 bg-[#16c800] text-black font-black uppercase text-xs tracking-widest rounded-xl hover:scale-105 transition active:scale-95">
+                + New Client Audit
             </button>
         </div>
     </aside>
 
-    <main class="flex-1 flex flex-col overflow-y-auto">
-        <header class="px-10 py-6 border-b border-white/5 flex justify-between items-center bg-black/50 sticky top-0 z-10">
+    <main class="flex-1 overflow-y-auto audit-container relative">
+        
+        <div class="sticky top-0 bg-white/90 backdrop-blur shadow-sm px-12 py-6 flex justify-between items-center z-50 no-print">
             <div>
-                <h2 id="current-client-name" class="text-2xl font-black uppercase italic tracking-tighter">Untitled Audit</h2>
-                <p id="current-client-id" class="text-[10px] mono opacity-30 uppercase tracking-widest"></p>
+                <h2 id="display-client-name" class="text-2xl font-black italic uppercase tracking-tighter">Untitled Audit</h2>
+                <span id="display-date" class="text-xs font-bold text-zinc-400 uppercase tracking-widest">Draft</span>
             </div>
             <div class="flex gap-4">
-                <button onclick="deleteCurrentAudit()" class="px-6 py-2 text-red-500 text-[10px] font-bold uppercase tracking-widest hover:bg-red-500/10 rounded-lg">Delete</button>
-                <button onclick="saveCurrentAudit()" class="px-8 py-2 bg-white text-black text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-[#16c800] hover:text-black transition">Save Changes</button>
+                <button onclick="window.print()" class="px-6 py-2 border border-zinc-200 text-xs font-bold uppercase rounded-lg hover:bg-zinc-50 transition">Export PDF</button>
+                <button onclick="saveCurrentAudit()" class="px-8 py-2 bg-black text-white text-xs font-bold uppercase rounded-lg hover:bg-[#16c800] hover:text-black transition">Save Audit</button>
+                <button onclick="deleteCurrentAudit()" class="p-2 text-red-300 hover:text-red-500 transition"><i class="fa-solid fa-trash"></i></button>
             </div>
-        </header>
+        </div>
 
-        <section class="p-12 max-w-4xl">
-            <div class="grid grid-cols-2 gap-8 mb-12">
+        <div id="audit-form" class="max-w-4xl mx-auto p-12 py-20">
+            
+            <div class="hidden print:flex justify-between items-center mb-12 border-b-4 border-black pb-8">
                 <div>
-                    <label class="text-[10px] font-black uppercase opacity-40 block mb-2">Company Name</label>
-                    <input type="text" id="form-name" placeholder="Acme Corp" oninput="updateClientDisplay(this.value)">
+                    <h1 class="text-3xl font-black italic tracking-tighter uppercase">Website Audit Report</h1>
+                    <p class="font-bold text-zinc-500 uppercase tracking-widest">Prepared by Streamlined Solutions</p>
+                </div>
+                <div class="text-right">
+                    <p id="print-date" class="text-sm font-bold"></p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-8 section-card">
+                <div>
+                    <label>Website URL</label>
+                    <input type="text" id="url" placeholder="www.clientwebsite.com">
                 </div>
                 <div>
-                    <label class="text-[10px] font-black uppercase opacity-40 block mb-2">Website URL</label>
-                    <input type="text" id="form-url" placeholder="https://...">
+                    <label>Client / Business Name</label>
+                    <input type="text" id="client_name" oninput="updateUIHeaders(this.value)" placeholder="Company Name">
                 </div>
             </div>
 
-            <div class="space-y-12">
-                <div>
-                    <h3 class="text-[#16c800] text-xs font-black tracking-[0.3em] uppercase mb-6 border-b border-[#16c800]/20 pb-2">01 // Performance Audit</h3>
-                    <div class="grid grid-cols-2 gap-6">
-                        <div>
-                            <label class="text-[10px] font-bold opacity-60 block mb-2">Load Speed (Seconds)</label>
-                            <input type="number" step="0.1" id="form-speed" placeholder="4.2">
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-bold opacity-60 block mb-2">Page Grade (F-A)</label>
-                            <select id="form-grade">
-                                <option>A</option><option>B</option><option>C</option><option>D</option><option>F</option>
-                            </select>
-                        </div>
+            <div class="section-card">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-black italic uppercase tracking-tighter">Executive Summary</h3>
+                    <div class="flex items-center gap-3">
+                        <label class="mt-0">Health Score</label>
+                        <input type="number" id="health_score" class="w-20 font-black text-center text-[#16c800] border-2 border-[#16c800]" value="0">
                     </div>
                 </div>
+                <textarea id="summary" rows="4" placeholder="Provide a clear, non-technical overview..."></textarea>
+            </div>
 
-                <div>
-                    <h3 class="text-[#16c800] text-xs font-black tracking-[0.3em] uppercase mb-6 border-b border-[#16c800]/20 pb-2">02 // Revenue Leakage</h3>
-                    <div>
-                        <label class="text-[10px] font-bold opacity-60 block mb-2">Est. Monthly Lost Revenue ($)</label>
-                        <input type="number" id="form-revenue" placeholder="12500">
-                    </div>
+            <div class="section-card">
+                <h3 class="text-lg font-black uppercase mb-6 flex items-center gap-3">
+                    <span class="bg-black text-white w-8 h-8 flex items-center justify-center text-xs italic">01</span>
+                    First Impression & Brand Clarity
+                </h3>
+                <div class="grid grid-cols-2 gap-6 mb-6">
+                    <div class="flex items-center gap-3"><input type="checkbox" id="brand_headline"> <label>Clear Headline</label></div>
+                    <div class="flex items-center gap-3"><input type="checkbox" id="brand_vp"> <label>Value Prop Above Fold</label></div>
+                    <div class="flex items-center gap-3"><input type="checkbox" id="brand_audience"> <label>Audience Defined</label></div>
+                    <div class="flex items-center gap-3"><input type="checkbox" id="brand_consist"> <label>Strong Brand Consistency</label></div>
                 </div>
+                <label>First Impression Notes</label>
+                <textarea id="brand_notes" rows="2"></textarea>
+            </div>
 
-                <div>
-                    <h3 class="text-[#16c800] text-xs font-black tracking-[0.3em] uppercase mb-6 border-b border-[#16c800]/20 pb-2">03 // Strategic Recommendations</h3>
-                    <textarea id="form-notes" rows="6" placeholder="List the top 3 items to fix..."></textarea>
+            <div class="section-card">
+                <h3 class="text-lg font-black uppercase mb-6 flex items-center gap-3">
+                    <span class="bg-black text-white w-8 h-8 flex items-center justify-center text-xs italic">02</span>
+                    User Experience (UX)
+                </h3>
+                <div class="grid grid-cols-3 gap-6">
+                    <div><label>Nav Simplicity</label><select id="ux_nav"><option>Good</option><option>Needs Improvement</option></select></div>
+                    <div><label>Layout Flow</label><select id="ux_flow"><option>Clear</option><option>Confusing</option></select></div>
+                    <div><label>Mobile Optimized</label><select id="ux_mobile"><option>Yes</option><option>Issues Found</option></select></div>
                 </div>
             </div>
-        </section>
+
+            <div class="section-card">
+                <h3 class="text-lg font-black uppercase mb-6 flex items-center gap-3">
+                    <span class="bg-black text-white w-8 h-8 flex items-center justify-center text-xs italic">03</span>
+                    Performance & Speed
+                </h3>
+                <div class="grid grid-cols-2 gap-8 mb-6">
+                    <div><label>Desktop Speed</label><select id="perf_desktop"><option>Good</option><option>Average</option><option>Poor</option></select></div>
+                    <div><label>Mobile Speed</label><select id="perf_mobile"><option>Good</option><option>Average</option><option>Poor</option></select></div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex items-center gap-3"><input type="checkbox" id="perf_images"> <label>Large Images Found</label></div>
+                    <div class="flex items-center gap-3"><input type="checkbox" id="perf_scripts"> <label>Excess Scripts</label></div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h3 class="text-lg font-black uppercase mb-6 flex items-center gap-3">
+                    <span class="bg-black text-white w-8 h-8 flex items-center justify-center text-xs italic">04</span>
+                    SEO Foundations
+                </h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex items-center gap-3"><input type="checkbox" id="seo_titles"> <label>Optimized Page Titles</label></div>
+                    <div class="flex items-center gap-3"><input type="checkbox" id="seo_meta"> <label>Meta Descriptions Present</label></div>
+                    <div class="flex items-center gap-3"><input type="checkbox" id="seo_headers"> <label>Proper Header (H1-H3) Structure</label></div>
+                    <div class="flex items-center gap-3"><input type="checkbox" id="seo_gbp"> <label>Google Business Profile Linked</label></div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h3 class="text-lg font-black uppercase mb-4 text-red-600">Priority Recommendations</h3>
+                <div class="space-y-4">
+                    <div><label>High Priority (Immediate Impact)</label><textarea id="rec_high" rows="3"></textarea></div>
+                    <div><label>Medium/Low Priority</label><textarea id="rec_med" rows="2"></textarea></div>
+                </div>
+            </div>
+
+            <div class="section-card bg-zinc-50 p-8 rounded-2xl border-none">
+                <h3 class="text-lg font-black uppercase mb-2">Estimated Opportunity Cost</h3>
+                <p class="text-xs font-bold text-zinc-500 mb-4 italic uppercase tracking-widest">What unresolved issues are costing per month</p>
+                <div class="flex items-center gap-4">
+                    <span class="text-3xl font-black italic">$</span>
+                    <input type="number" id="opp_cost" class="text-3xl font-black bg-transparent border-b-4 border-black rounded-none w-full" placeholder="0.00">
+                </div>
+            </div>
+
+            <div class="mt-20 text-center border-t pt-10">
+                <h4 class="font-black italic text-xl tracking-tighter uppercase"><span class="text-[#16c800]">Streamlined</span> Solutions</h4>
+                <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.3em] mt-2">Operational Efficiency • Websites • Systems</p>
+            </div>
+
+        </div>
     </main>
 
     <script>
-        let audits = JSON.parse(localStorage.getItem('stml_audits')) || [];
-        let activeAuditId = null;
+        let audits = JSON.parse(localStorage.getItem('ss_audit_db')) || [];
+        let activeId = null;
+
+        const fields = [
+            'url', 'client_name', 'health_score', 'summary', 'brand_headline', 'brand_vp', 
+            'brand_audience', 'brand_consist', 'brand_notes', 'ux_nav', 'ux_flow', 
+            'ux_mobile', 'perf_desktop', 'perf_mobile', 'perf_images', 'perf_scripts',
+            'seo_titles', 'seo_meta', 'seo_headers', 'seo_gbp', 'rec_high', 'rec_med', 'opp_cost'
+        ];
 
         function createNewAudit() {
             const newAudit = {
                 id: 'AUDIT-' + Date.now(),
-                name: 'New Client',
-                url: '',
-                speed: 0,
-                grade: 'C',
-                revenue: 0,
-                notes: '',
-                date: new Date().toLocaleDateString()
+                date: new Date().toLocaleDateString(),
+                client_name: 'New Client'
             };
+            fields.forEach(f => newAudit[f] = (f.includes('brand_') || f.includes('perf_') || f.includes('seo_')) && !f.includes('notes') ? false : '');
+            newAudit.health_score = 0;
+            
             audits.unshift(newAudit);
             saveToStorage();
             loadAudit(newAudit.id);
         }
 
         function loadAudit(id) {
-            activeAuditId = id;
+            activeId = id;
             const audit = audits.find(a => a.id === id);
             
-            // Update UI
-            document.getElementById('current-client-name').innerText = audit.name;
-            document.getElementById('current-client-id').innerText = audit.id;
-            document.getElementById('form-name').value = audit.name;
-            document.getElementById('form-url').value = audit.url;
-            document.getElementById('form-speed').value = audit.speed;
-            document.getElementById('form-grade').value = audit.grade;
-            document.getElementById('form-revenue').value = audit.revenue;
-            document.getElementById('form-notes').value = audit.notes;
+            document.getElementById('display-client-name').innerText = audit.client_name || 'Untitled';
+            document.getElementById('display-date').innerText = audit.date;
+            document.getElementById('print-date').innerText = audit.date;
+
+            fields.forEach(field => {
+                const el = document.getElementById(field);
+                if (el.type === 'checkbox') el.checked = audit[field];
+                else el.value = audit[field] || '';
+            });
 
             renderSidebar();
         }
 
         function saveCurrentAudit() {
-            const index = audits.findIndex(a => a.id === activeAuditId);
-            audits[index] = {
-                ...audits[index],
-                name: document.getElementById('form-name').value,
-                url: document.getElementById('form-url').value,
-                speed: document.getElementById('form-speed').value,
-                grade: document.getElementById('form-grade').value,
-                revenue: document.getElementById('form-revenue').value,
-                notes: document.getElementById('form-notes').value
-            };
+            const index = audits.findIndex(a => a.id === activeId);
+            const data = { ...audits[index] };
+            
+            fields.forEach(field => {
+                const el = document.getElementById(field);
+                data[field] = el.type === 'checkbox' ? el.checked : el.value;
+            });
+
+            audits[index] = data;
             saveToStorage();
             renderSidebar();
-            alert('Audit Saved to Database');
+            alert('Audit Database Updated.');
+        }
+
+        function updateUIHeaders(val) {
+            document.getElementById('display-client-name').innerText = val || 'Untitled Audit';
         }
 
         function deleteCurrentAudit() {
-            if(confirm('Delete this client permanentely?')) {
-                audits = audits.filter(a => a.id !== activeAuditId);
+            if(confirm('Permanentely delete this audit?')) {
+                audits = audits.filter(a => a.id !== activeId);
                 saveToStorage();
                 if(audits.length > 0) loadAudit(audits[0].id);
                 else location.reload();
             }
         }
 
-        function updateClientDisplay(val) {
-            document.getElementById('current-client-name').innerText = val || 'Untitled Audit';
-        }
-
-        function saveToStorage() {
-            localStorage.setItem('stml_audits', JSON.stringify(audits));
-        }
+        function saveToStorage() { localStorage.setItem('ss_audit_db', JSON.stringify(audits)); }
 
         function renderSidebar() {
             const list = document.getElementById('client-list');
             list.innerHTML = audits.map(a => `
-                <div onclick="loadAudit('${a.id}')" class="sidebar-item p-4 rounded-xl mb-2 cursor-pointer transition ${a.id === activeAuditId ? 'active' : ''}">
-                    <p class="text-[10px] opacity-40 font-bold mb-1">${a.date}</p>
-                    <h4 class="font-black uppercase italic tracking-tighter text-sm">${a.name}</h4>
-                    <p class="text-[10px] opacity-60 truncate">${a.url || 'No URL'}</p>
+                <div onclick="loadAudit('${a.id}')" class="sidebar-item p-5 rounded-2xl cursor-pointer transition ${a.id === activeId ? 'active' : 'opacity-60 hover:opacity-100'}">
+                    <p class="text-[9px] font-black uppercase tracking-widest text-[#16c800] mb-1">${a.date}</p>
+                    <h4 class="font-bold text-sm truncate">${a.client_name}</h4>
+                    <p class="text-[10px] opacity-50 truncate">${a.url || 'No URL set'}</p>
                 </div>
             `).join('');
         }
 
-        // Initial Load
+        // Init
         if(audits.length === 0) createNewAudit();
         else loadAudit(audits[0].id);
     </script>
